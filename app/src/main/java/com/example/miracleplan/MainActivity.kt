@@ -56,29 +56,38 @@ fun MainPage() {
 }
 @Composable
 fun TodaySign(modifier: Modifier = Modifier) {
-        val month: Int = 8
-        val daysLeft: Int = 8
+    val month: Int = 8
+    val daysLeft: Int = 8
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+    ) {
         Row(
             modifier = Modifier
+                .align(Alignment.Center)
                 .width(361.dp)
                 .height(28.dp),
-            verticalAlignment = Alignment.CenterVertically, // 아이콘과 텍스트를 수직으로 중앙 정렬
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
-            //                .padding(horizontal = 12.dp, vertical = 18.dp)
         ) {
-            Text(
-                text = "${month}월 (D-$daysLeft)",
-                fontFamily = customFont,
-                fontSize = 20.sp,
-                lineHeight = 28.sp,
-                letterSpacing = -0.24.sp
-            )
+            Box(modifier = Modifier.width(327.dp)) {
+                Text(
+                    text = "${month}월 (D-$daysLeft)",
+                    fontFamily = customFont,
+                    fontSize = 20.sp,
+                    lineHeight = 28.sp,
+                    letterSpacing = -0.24.sp
+                )
+            }
             Icon(
                 painter = painterResource(id = R.drawable.bell),
                 contentDescription = "알림",
-                tint = Color.Gray
+                tint = Color.Gray,
+                modifier = Modifier.padding(start = 10.dp)
             )
         }
+    }
 }
 @Composable
 fun CustomBottomNavigationBar(modifier: Modifier = Modifier) {
