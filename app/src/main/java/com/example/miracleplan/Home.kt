@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 
@@ -72,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") { MainPage(navController) } // Home 화면
                     composable("group") { GroupPage(navController) } // Group 화면
-                    composable("record") { RecordPage() } // Record 화면
+                    composable("record") { RecordPage(navController) } // Record 화면
                 }
             }
         }
@@ -304,37 +306,68 @@ fun BetweenLayer() {
 
 }
 
+
+
 @Composable
 fun CustomBottomNavigationBar(modifier: Modifier = Modifier, navController: NavHostController) {
+    val currentRoute = currentRoute(navController)
+
     Row(
         modifier = modifier
-            .width(393.dp)
+            .fillMaxWidth()
             .height(60.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         NavigationItem(
-            iconResId = R.drawable.homestrock,
+            iconResId = if (currentRoute == "home") R.drawable.clickhome else R.drawable.homestrock,
             label = "홈",
-            onClick = { navController.navigate("home") }
+            isSelected = currentRoute == "home",
+            onClick = {
+                navController.navigate("home") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
         )
 
         NavigationItem(
-            iconResId = R.drawable.group,
+            iconResId = if (currentRoute == "group") R.drawable.clickgroup else R.drawable.group,
             label = "그룹",
-            onClick = { navController.navigate("group") }
+            isSelected = currentRoute == "group",
+            onClick = {
+                navController.navigate("group") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
         )
 
         NavigationItem(
-            iconResId = R.drawable.record,
+            iconResId = if (currentRoute == "record") R.drawable.clickrecord else R.drawable.record,
             label = "기록",
-            onClick = { navController.navigate("record") }
+            isSelected = currentRoute == "record",
+            onClick = {
+                navController.navigate("record") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
         )
     }
 }
 
 @Composable
-fun NavigationItem(iconResId: Int, label: String, onClick: () -> Unit) {
+fun NavigationItem(iconResId: Int, label: String, isSelected: Boolean, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(131.dp)
@@ -346,7 +379,7 @@ fun NavigationItem(iconResId: Int, label: String, onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = iconResId),
             contentDescription = label,
-            tint = colorResource(id = R.color.gray)
+            tint = if (isSelected) colorResource(id = R.color.black) else colorResource(id = R.color.gray)
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -354,11 +387,20 @@ fun NavigationItem(iconResId: Int, label: String, onClick: () -> Unit) {
             text = label,
             fontSize = 12.sp,
             lineHeight = 16.sp,
-            color = colorResource(id = R.color.gray),
+            color = if (isSelected) colorResource(id = R.color.black) else colorResource(id = R.color.gray),
             fontWeight = FontWeight.Medium
         )
     }
 }
+
+// 현재 라우트를 얻는 헬퍼 함수
+@Composable
+fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+
+
 //achievements: List<String>
 @Composable
 fun AchievementList() {
@@ -495,7 +537,13 @@ fun GroupRank(navController: NavController) {
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .clickable {
-                        navController.navigate("group") // 페이지 이동
+                        navController.navigate("group") {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
             )
         }
@@ -559,14 +607,21 @@ fun PersonRow(person: Person, rank: Int) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
 data class Person(
     val name: String,
     val points: Int,
     val profileImageResId: Int
 )
-
-
-
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -574,7 +629,7 @@ fun GroupPage(navController: NavHostController = rememberNavController()) {
     val groupInfos = listOf(
         GroupInfo(groupName = "이주영팸", wakeUpTime = 730, peopleCount = 4),
         GroupInfo(groupName = "선린일짱", wakeUpTime = 800, peopleCount = 3),
-        GroupInfo(groupName = "2학년 5반", wakeUpTime = 920, peopleCount = 20)
+        GroupInfo(groupName = "2학년 5반", wakeUpTime = 920, peopleCount = 15)
     )
 
     Box(
@@ -642,17 +697,27 @@ fun GroupBox(groupInfo: GroupInfo) {
     val hours = groupInfo.wakeUpTime / 100
     val minutes = groupInfo.wakeUpTime % 100
 
-    // 사용할 프로필 이미지 리소스 아이디를 리스트로 정의
+    // 사용할 프로필 이미지 리소스 아이디를 리스트로 정의 (8개)
     val profileImages = listOf(
         R.drawable.profile1,
         R.drawable.profile2,
         R.drawable.profile3,
-        R.drawable.profile4
+        R.drawable.profile4,
+        R.drawable.profile5,
+        R.drawable.profile6,
+        R.drawable.profile7,
+        R.drawable.profile8
     )
 
     val imageSize = 24.dp
     val overlapOffset = 12.dp
     val imageCount = profileImages.size
+
+    // 인원 수에 상관없이 최대 5개의 이미지만 표시
+    val displayCount = minOf(groupInfo.peopleCount, 5)
+    val selectedImages = List(displayCount) { index ->
+        profileImages[index % imageCount]
+    }.shuffled()
 
     Column(
         modifier = Modifier
@@ -676,6 +741,7 @@ fun GroupBox(groupInfo: GroupInfo) {
                 letterSpacing = (-0.24).sp
             )
         }
+
         // 기상 시간
         Row(
             modifier = Modifier
@@ -694,7 +760,11 @@ fun GroupBox(groupInfo: GroupInfo) {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "${hours}시 ${minutes}분",
+                text = if (minutes == 0) {
+                    "${hours}시"
+                } else {
+                    "${hours}시 ${minutes}분"
+                },
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -702,6 +772,7 @@ fun GroupBox(groupInfo: GroupInfo) {
                 letterSpacing = 0.091.sp
             )
         }
+
         // 인원과 프로필 이미지
         Row(
             modifier = Modifier
@@ -722,26 +793,21 @@ fun GroupBox(groupInfo: GroupInfo) {
             )
             Spacer(modifier = Modifier.width(12.dp))
 
-            // 프로필 이미지를 겹쳐서 표시
+            // 최대 5개의 프로필 이미지를 겹쳐서 표시
             Box(
                 modifier = Modifier
                     .wrapContentWidth(Alignment.Start)
             ) {
-                // Display profile images
-                val displayCount = minOf(groupInfo.peopleCount, imageCount)
-                repeat(displayCount) { index ->
-                    val reverseIndex = displayCount - 1 - index
+                selectedImages.take(5).forEachIndexed { index, imageResId ->
                     Image(
-                        painter = painterResource(id = profileImages[reverseIndex % imageCount]),
+                        painter = painterResource(id = imageResId),
                         contentDescription = "Person $index",
                         modifier = Modifier
                             .size(imageSize)
-                            .zIndex(index.toFloat()) // 겹침 순서 조정
+                            .zIndex(index.toFloat())
                             .offset(x = index * -overlapOffset)
                     )
                 }
-
-
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -767,44 +833,215 @@ fun GroupBox(groupInfo: GroupInfo) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @Composable
-fun RecordPage() {
+fun RecordPage(navController: NavHostController = rememberNavController()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.white))
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 60.dp)
         ) {
-            Text(
-                text = "기록 페이지",
-                fontFamily = customFont,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.black)
+            item { RecordSign() }
+            item { MonthSign() }
+            item { Calendar() }
+
+        }
+        CustomBottomNavigationBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            navController = navController
+        )
+    }
+}
+
+@Composable
+fun RecordSign(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .background(color = colorResource(id = R.color.white))
+            .height(28.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "기록",
+            fontFamily = customFont,
+            fontSize = 20.sp,
+            lineHeight = 28.sp,
+            letterSpacing = (-0.24).sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.bell),
+            contentDescription = "알림",
+            tint = colorResource(id = R.color.gray),
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+}
+
+@Composable
+fun MonthSign() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .background(color = colorResource(id = R.color.white))
+            .height(28.dp),
+        Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.leftaroow),
+            contentDescription = "이전 달로 이동",
             )
+        Text(
+            text = "8월",
+            fontSize = 20.sp,
+            lineHeight = 28.sp,
+            fontFamily = customFont,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.24).sp,
+            modifier = Modifier.padding(horizontal = 48.dp)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.rightarrow),
+            contentDescription = "이전 달로 이동",
+        )
+    }
+}
+
+@Composable
+fun Calendar() {
+    val daysInMonth = 31 // 이 달의 총 날짜 수
+    val startDay = 1
+    val endDay = daysInMonth
+    val rows = (endDay - startDay + 1 + 6) / 7 // 7일 단위로 나누어 필요한 행 수 계산
+    val currentDate = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH) // 현재 날짜
+
+    Column {
+        RecordDateRow()
+
+        for (row in 0 until rows) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                for (col in 0 until 7) {
+                    val day = row * 7 + col + 1
+                    if (day in startDay..endDay) {
+                        WeekNumBox(dateNum = day, currentDate = currentDate, status = if (day % 2 == 0) "성공" else "실패")
+                    } else {
+                        WeekNumBox(dateNum = 0, currentDate = currentDate, status = "")
+                    }
+                }
+            }
         }
     }
 }
 
+@Composable
+fun RecordDateRow() {
+    val datetext = listOf(
+        "월", "화", "수", "목", "금", "토", "일"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .padding(vertical = 4.dp, horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        datetext.forEach { day ->
+            WeekBox(day = day)
+        }
+    }
+}
+
+@Composable
+fun WeekBox(day: String) {
+    Box(
+        modifier = Modifier
+            .width(44.dp)
+            .height(51.6.dp)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = day,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Gray,
+            letterSpacing = 0.091.sp
+        )
+    }
+}
+
+@Composable
+fun WeekNumBox(dateNum: Int, currentDate: Int, status: String) {
+
+    Box(
+        modifier = Modifier
+            .width(51.6.dp)
+            .height(62.dp)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = if (dateNum > 0) dateNum.toString() else "",
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Medium,
+                letterSpacing = 0.091.sp,
+                color = colorResource(id = R.color.gray)
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = when {
+                    dateNum == 0 -> ""
+                    dateNum > currentDate -> "예정"
+                    else -> status
+                },
+                fontFamily = customFont,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = when {
+                    dateNum == 0 -> Color.Transparent
+                    dateNum > currentDate -> colorResource(id = R.color.gray)
+                    status == "성공" -> colorResource(id = R.color.green)
+                    else -> colorResource(id = R.color.red)
+                }
+            )
+        }
+    }
+}
+val customFont2 = FontFamily(
+    Font(R.font.prebold)
+)
 
 
 
@@ -813,12 +1050,6 @@ fun RecordPage() {
 @Composable
 fun Preview() {
     MiracleplanTheme {
-//        val sampleGroupInfo = GroupInfo(
-//            groupName = "7시반 미라클 모닝 팟 구함",
-//            wakeUpTime = 730,
-//            peopleCount = 8
-//        )
-//        GroupBox(groupInfo = sampleGroupInfo)
-        GroupPage()
+        RecordPage()
     }
 }
