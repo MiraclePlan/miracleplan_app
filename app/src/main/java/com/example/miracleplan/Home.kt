@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +43,17 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
+import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 
 
@@ -51,41 +65,46 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContent {
-            MainPage()
+            MiracleplanTheme {
+                // 네비게이션 설정
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "home") {
+                    composable("home") { MainPage(navController) } // Home 화면
+                    composable("group") { GroupPage(navController) } // Group 화면
+                    composable("record") { RecordPage() } // Record 화면
+                }
+            }
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun MainPage() {
+fun MainPage(navController: NavHostController = rememberNavController()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.white))
     ) {
-        Column(
+        // Add verticalScroll modifier to Column
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 60.dp) // 바텀 네비게이션 바의 높이만큼 패딩 추가
+                .padding(bottom = 60.dp)
         ) {
-            TodaySign()
-            ChallengeBox()
-            BetweenLayer()
-            AchievementList()
-            BetweenLayer()
-            GroupRank()
-            // Spacer 추가 (유동적인 여백 추가)
-            Spacer(modifier = Modifier.weight(1f))
+            item { TodaySign() }
+            item { ChallengeBox() }
+            item { BetweenLayer() }
+            item { AchievementList() }
+            item { BetweenLayer() }
+            item { GroupRank(navController = navController) }
         }
-
         CustomBottomNavigationBar(
             modifier = Modifier
-                .align(Alignment.BottomCenter) // 하단 고정
-                .fillMaxWidth()
-                .height(60.dp) // 바텀 네비게이션 바의 높이
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            navController = navController
         )
     }
 }
@@ -94,37 +113,31 @@ fun MainPage() {
 fun TodaySign(modifier: Modifier = Modifier) {
     val month = 8
     val daysLeft = 8
-    Box(
+
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp)
             .background(color = colorResource(id = R.color.white))
+            .height(28.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween // Row 내부에서 요소 간의 간격을 자동으로 조정
     ) {
-        Row(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .width(361.dp)
-                .height(28.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Box(modifier = Modifier.width(327.dp)) {
-                Text(
-                    text = "${month}월 (D-$daysLeft)",
-                    fontFamily = customFont,
-                    fontSize = 20.sp,
-                    lineHeight = 28.sp,
-                    letterSpacing = (-0.24).sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Icon(
-                painter = painterResource(id = R.drawable.bell),
-                contentDescription = "알림",
-                tint = colorResource(id = R.color.gray),
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        }
+        Text(
+            text = "${month}월 (D-$daysLeft)",
+            fontFamily = customFont,
+            fontSize = 20.sp,
+            lineHeight = 28.sp,
+            letterSpacing = (-0.24).sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f) // 텍스트가 가능한 한 넓게 차지하도록 설정
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.bell),
+            contentDescription = "알림",
+            tint = colorResource(id = R.color.gray),
+            modifier = Modifier.padding(start = 10.dp)
+        )
     }
 }
 
@@ -142,6 +155,7 @@ fun ChallengeBox() {
         DateNumRow()
     }
 }
+
 @Composable
 fun DateRow() {
     Box(
@@ -248,7 +262,6 @@ fun DateNumRow() {
     }
 }
 
-
 @Composable
 fun DateNumBox(num: Int, isCenter: Boolean) {
     Box(
@@ -280,8 +293,6 @@ fun DateNumBox(num: Int, isCenter: Boolean) {
     }
 }
 
-
-
 @Composable
 fun BetweenLayer() {
     Box(
@@ -294,7 +305,7 @@ fun BetweenLayer() {
 }
 
 @Composable
-fun CustomBottomNavigationBar(modifier: Modifier = Modifier) {
+fun CustomBottomNavigationBar(modifier: Modifier = Modifier, navController: NavHostController) {
     Row(
         modifier = modifier
             .width(393.dp)
@@ -304,27 +315,31 @@ fun CustomBottomNavigationBar(modifier: Modifier = Modifier) {
     ) {
         NavigationItem(
             iconResId = R.drawable.homestrock,
-            label = "홈"
+            label = "홈",
+            onClick = { navController.navigate("home") }
         )
 
         NavigationItem(
             iconResId = R.drawable.group,
-            label = "그룹"
+            label = "그룹",
+            onClick = { navController.navigate("group") }
         )
 
         NavigationItem(
             iconResId = R.drawable.record,
-            label = "기록"
+            label = "기록",
+            onClick = { navController.navigate("record") }
         )
     }
 }
 
 @Composable
-fun NavigationItem(iconResId: Int, label: String) {
+fun NavigationItem(iconResId: Int, label: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(131.dp)
-            .height(44.dp),
+            .height(44.dp)
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -352,12 +367,13 @@ fun AchievementList() {
         "독서 30분",
         "코딩 공부 1시간",
         "청소하기",
-//        "저녁 산책",
-//        "명상하기",
-//        "가족과 시간 보내기"
-    )
-    Column (
-        modifier = Modifier.padding(vertical = 12.dp)
+        "저녁 산책",
+        "명상하기",
+        "가족과 시간 보내기"
+    ) // 더미 데이터 나중에 서버에서 받을거임
+    Column(
+        modifier = Modifier
+            .padding(vertical = 12.dp)
     ) {
         Row(
             modifier = Modifier
@@ -375,26 +391,33 @@ fun AchievementList() {
                 letterSpacing = (-0.24).sp,
             )
         }
-        LazyColumn {
-            items(dummyAchievements) { achievement ->
-                AchievementItem(achievement.toString())
-            }
+        dummyAchievements.forEach { achievement ->
+            AchievementItem(achievement)
         }
     }
 }
 
 @Composable
 fun AchievementItem(achievement: String) {
-    Row (
+    // 체크 상태를 기억하는 변수
+    var isChecked by remember { mutableStateOf(false) }
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp)
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .clickable {
+                // 클릭 시 체크 상태를 토글
+                isChecked = !isChecked
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.check),
-            contentDescription = "체크박스",
+            painter = painterResource(
+                id = if (isChecked) R.drawable.check else R.drawable.uncheck),
+            contentDescription = if (isChecked) "체크됨" else "체크안됨",
+            tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -405,14 +428,15 @@ fun AchievementItem(achievement: String) {
             color = colorResource(id = R.color.gray),
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal,
-            letterSpacing = 0.091.sp
+            letterSpacing = 0.091.sp,
+            textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None
         )
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun GroupRank() {
+fun GroupRank(navController: NavController) {
     val people = listOf(
         Person("기모띠이정우", 50, R.drawable.profile1),
         Person("카와이이주영", 80, R.drawable.profile2),
@@ -422,23 +446,24 @@ fun GroupRank() {
     val sortedPeople = people.sortedByDescending { it.points }
 
     val rankList = mutableListOf<Pair<Person, Int>>()
-    var currentRank = 1
+    var currentRank: Int
     var previousPoints: Int? = null
     var previousRank = 1
 
     for ((index, person) in sortedPeople.withIndex()) {
-        if (person.points != previousPoints) {
-            currentRank = index + 1
+        currentRank = if (person.points != previousPoints) {
+            index + 1
         } else {
-            currentRank = previousRank
+            previousRank
         }
         rankList.add(person to currentRank)
         previousPoints = person.points
         previousRank = currentRank
     }
 
-    Column (
-        modifier = Modifier.padding(vertical = 12.dp)
+    Column(
+        modifier = Modifier
+            .padding(vertical = 12.dp)
     ) {
         Row(
             modifier = Modifier
@@ -467,21 +492,22 @@ fun GroupRank() {
                 painter = painterResource(id = R.drawable.arrow),
                 contentDescription = "그룹으로 이동",
                 tint = colorResource(id = R.color.gray),
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .clickable {
+                        navController.navigate("group") // 페이지 이동
+                    }
             )
         }
-
-        LazyColumn {
-            items(rankList) { (person, rank) ->
-                PersonRow(person = person, rank = rank)
-            }
+        rankList.forEach { (person, rank) ->
+            PersonRow(person = person, rank = rank)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun PersonRow(person: com.example.miracleplan.Person, rank: Int) {
+fun PersonRow(person: Person, rank: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -541,11 +567,258 @@ data class Person(
 
 
 
+
+@RequiresApi(Build.VERSION_CODES.P)
+@Composable
+fun GroupPage(navController: NavHostController = rememberNavController()) {
+    val groupInfos = listOf(
+        GroupInfo(groupName = "이주영팸", wakeUpTime = 730, peopleCount = 4),
+        GroupInfo(groupName = "선린일짱", wakeUpTime = 800, peopleCount = 3),
+        GroupInfo(groupName = "2학년 5반", wakeUpTime = 920, peopleCount = 20)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.white))
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 60.dp)
+        ) {
+            item { GroupSign() }
+            items(groupInfos) { groupInfo ->
+                GroupBox(groupInfo = groupInfo)
+            }
+        }
+        CustomBottomNavigationBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            navController = navController
+        )
+    }
+}
+
+@Composable
+fun GroupSign(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .background(color = colorResource(id = R.color.white))
+            .height(28.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween // Row 내부에서 요소 간의 간격을 자동으로 조정
+    ) {
+        Text(
+            text = "그룹",
+            fontFamily = customFont,
+            fontSize = 20.sp,
+            lineHeight = 28.sp,
+            letterSpacing = (-0.24).sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.bell),
+            contentDescription = "알림",
+            tint = colorResource(id = R.color.gray),
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+}
+
+data class GroupInfo(
+    val groupName: String,
+    val wakeUpTime: Int,
+    val peopleCount: Int
+)
+
+
+@Composable
+fun GroupBox(groupInfo: GroupInfo) {
+    val hours = groupInfo.wakeUpTime / 100
+    val minutes = groupInfo.wakeUpTime % 100
+
+    // 사용할 프로필 이미지 리소스 아이디를 리스트로 정의
+    val profileImages = listOf(
+        R.drawable.profile1,
+        R.drawable.profile2,
+        R.drawable.profile3,
+        R.drawable.profile4
+    )
+
+    val imageSize = 24.dp
+    val overlapOffset = 12.dp
+    val imageCount = profileImages.size
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(124.dp)
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+    ) {
+        // 그룹 이름
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .padding(vertical = 4.dp)
+        ) {
+            Text(
+                text = groupInfo.groupName,
+                fontSize = 20.sp,
+                lineHeight = 28.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = customFont,
+                letterSpacing = (-0.24).sp
+            )
+        }
+        // 기상 시간
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .padding(vertical = 4.dp)
+        ) {
+            Text(
+                text = "기상",
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = customFont,
+                letterSpacing = 0.091.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "${hours}시 ${minutes}분",
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = customFont,
+                letterSpacing = 0.091.sp
+            )
+        }
+        // 인원과 프로필 이미지
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "인원",
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = customFont,
+                letterSpacing = 0.091.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // 프로필 이미지를 겹쳐서 표시
+            Box(
+                modifier = Modifier
+                    .wrapContentWidth(Alignment.Start)
+            ) {
+                // Display profile images
+                val displayCount = minOf(groupInfo.peopleCount, imageCount)
+                repeat(displayCount) { index ->
+                    val reverseIndex = displayCount - 1 - index
+                    Image(
+                        painter = painterResource(id = profileImages[reverseIndex % imageCount]),
+                        contentDescription = "Person $index",
+                        modifier = Modifier
+                            .size(imageSize)
+                            .zIndex(index.toFloat()) // 겹침 순서 조정
+                            .offset(x = index * -overlapOffset)
+                    )
+                }
+
+
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "${groupInfo.peopleCount}명",
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = customFont,
+                letterSpacing = 0.091.sp
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@Composable
+fun RecordPage() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.white))
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "기록 페이지",
+                fontFamily = customFont,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.black)
+            )
+        }
+    }
+}
+
+
+
+
 @RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
     MiracleplanTheme {
-        MainPage()
+//        val sampleGroupInfo = GroupInfo(
+//            groupName = "7시반 미라클 모닝 팟 구함",
+//            wakeUpTime = 730,
+//            peopleCount = 8
+//        )
+//        GroupBox(groupInfo = sampleGroupInfo)
+        GroupPage()
     }
 }
