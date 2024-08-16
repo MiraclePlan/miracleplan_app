@@ -5,15 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.miracleplan.data.model.AccessTokenResponse
-import com.example.miracleplan.data.model.RefreshTokenRequest
-import com.example.miracleplan.data.model.TokenRequest
-import com.example.miracleplan.data.model.UserCreateRequest
-import com.example.miracleplan.data.model.UserResponse
+import com.example.miracleplan.data.model.*
 import com.example.miracleplan.data.network.ApiService
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val apiService: ApiService) : ViewModel() {
+
     private val _accessToken = MutableLiveData<AccessTokenResponse>()
     val accessToken: LiveData<AccessTokenResponse> get() = _accessToken
 
