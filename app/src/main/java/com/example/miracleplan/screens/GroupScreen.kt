@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,7 +60,9 @@ fun GroupPage(navController: NavHostController = rememberNavController()) {
         ) {
             item { GroupSign() }
             items(groupInfos) { groupInfo ->
-                GroupBox(groupInfo = groupInfo)
+                GroupBox(groupInfo = groupInfo, onClick = {
+                    navController.navigate("groupDetails")
+                })
             }
         }
 
@@ -116,7 +120,7 @@ data class GroupInfo(
 )
 
 @Composable
-fun GroupBox(groupInfo: GroupInfo) {
+fun GroupBox(groupInfo: GroupInfo, onClick: () -> Unit) {
     val hours = groupInfo.wakeUpTime / 100
     val minutes = groupInfo.wakeUpTime % 100
 
@@ -140,6 +144,7 @@ fun GroupBox(groupInfo: GroupInfo) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp)
+            .clickable(onClick = onClick)
     ) {
         GroupHeader(groupInfo.groupName)
         WakeUpTime(hours, minutes)
@@ -265,3 +270,12 @@ fun GroupPlus(modifier: Modifier = Modifier, isTransparent: Boolean, onClick: ()
 
 
 
+
+//@RequiresApi(Build.VERSION_CODES.P)
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        GeneratedGroupPage()
+//    }
+//}

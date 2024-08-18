@@ -1,5 +1,7 @@
 package com.example.miracleplan.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,12 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
 import com.example.miracleplan.customFont
+import com.example.miracleplan.ui.theme.MiracleplanTheme
 
 @Composable
 fun RecordPage(navController: NavHostController = rememberNavController()) {
@@ -217,3 +221,13 @@ fun WeekNumBox(dateNum: Int, currentDate: Int, status: String) {
         }
     }
 }
+
+
+//@RequiresApi(Build.VERSION_CODES.P)
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        MainPage()
+//    }
+//}

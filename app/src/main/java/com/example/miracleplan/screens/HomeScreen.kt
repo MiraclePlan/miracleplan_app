@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -31,6 +32,8 @@ import com.example.miracleplan.R
 import com.example.miracleplan.customFont
 import com.example.miracleplan.data.Member
 import com.example.miracleplan.data.members
+import com.example.miracleplan.ui.theme.MiracleplanTheme
+import java.time.LocalDate
 
 private val BoxWidth = 393.dp
 private val ItemHeight = 52.dp
@@ -101,6 +104,7 @@ fun TodaySign(modifier: Modifier = Modifier) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChallengeBox() {
     Column(
@@ -199,17 +203,22 @@ fun SuccessfulStatusBox(status: String) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateNumRow() {
+    // 현재 날짜 가져오기
+    val today = remember { LocalDate.now() }
+    // 현재 날짜에서 -3일부터 +3일까지의 날짜 리스트 생성
+    val dates = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
             .padding(vertical = 4.dp, horizontal = PaddingHorizontal)
     ) {
-        val nums = listOf(1, 2, 3, 4, 5, 6, 7)
-        nums.forEachIndexed { index, num ->
-            DateNumBox(num, isCenter = index == nums.size / 2)
+        dates.forEachIndexed { index, date ->
+            DateNumBox(date.dayOfMonth, isCenter = index == 3)
         }
     }
 }
@@ -499,4 +508,13 @@ fun calculateRankList(members: List<Member>): List<Pair<Member, Int>> {
 
     return rankList
 }
+
+//@RequiresApi(Build.VERSION_CODES.P)
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        MainPage()
+//    }
+//}
 

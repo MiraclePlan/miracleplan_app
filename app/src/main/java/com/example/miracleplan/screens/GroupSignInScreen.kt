@@ -61,7 +61,7 @@ fun GroupSignInPage(navController: NavHostController = rememberNavController()) 
         GroupText()
         GroupNameBox()
         Spacer(modifier = Modifier.weight(1f))
-        GroupGenerateButton(onClick = {})
+        GroupGenerateButton(onClick = {navController.navigate("generatedGroup")})
     }
 }
 
@@ -71,13 +71,13 @@ fun GoBackSign(onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .padding(16.dp)
-            .clickable(onClick = onClick),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.leftaroow),
-            contentDescription = "돌아가기"
+            contentDescription = "돌아가기",
+            modifier = Modifier.clickable(onClick = onClick),
         )
     }
 }
@@ -182,7 +182,8 @@ fun GroupGenerateButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .width(361.dp)
-            .height(56.dp),
+            .height(56.dp)
+            .clickable(onClick = onClick),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.black), // 배경색 설정
             contentColor = colorResource(id = R.color.white)   // 텍스트 색상 설정
@@ -199,128 +200,12 @@ fun GroupGenerateButton(onClick: () -> Unit) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-@Composable
-fun JoinedGroupPage(navController: NavHostController = rememberNavController()) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.white))
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 60.dp)
-        ) {
-            item { GroupSignWithSetting() }
-            item { GroupMemberRow() }
-            item { BetweenLayer() }
-            item { GroupRank(navController, showIcon = false) }
-        }
-        CustomBottomNavigationBar(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            navController = navController
-        )
-    }
-}
 
-@Composable
-fun GroupSignWithSetting() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .background(color = colorResource(id = R.color.white))
-            .height(28.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "그룹",
-            fontFamily = customFont,
-            fontSize = 20.sp,
-            lineHeight = 28.sp,
-            letterSpacing = (-0.24).sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(1f)
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.setting),
-            contentDescription = "설정",
-            tint = colorResource(id = R.color.gray)
-        )
-    }
-}
-
-@Composable
-fun GroupMemberRow() {
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(160.dp)
-            .padding(16.dp)
-    ) {
-        items(members) { member ->
-            GroupMemberBox(member)
-        }
-    }
-}
-
-
-@Composable
-fun GroupMemberBox(member: Member) {
-    Row(
-        modifier = Modifier
-            .width(96.dp)
-            .height(128.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .width(72.dp)
-                .height(128.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(id = member.profileImageResId),
-                contentDescription = "${member.name} 프로필 사진"
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = member.name,
-                fontFamily = customFont,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.091.sp
-            )
-            Text(
-                text = member.status,
-                color = when (member.status) {
-                    "성공" -> colorResource(id = R.color.green)
-                    "실패" -> colorResource(id = R.color.red)
-                    "도전 중" -> colorResource(id = R.color.gray)
-                    else -> colorResource(id = R.color.gray)
-                },
-                fontFamily = customFont,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.091.sp
-            )
-        }
-        Spacer(modifier = Modifier.width(24.dp))
-    }
-}
-
-
-
-@RequiresApi(Build.VERSION_CODES.P)
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    MiracleplanTheme {
-        JoinedGroupPage()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.P)
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        MainPage()
+//    }
+//}
