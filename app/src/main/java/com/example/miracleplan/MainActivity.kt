@@ -12,6 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.miracleplan.screens.GeneratedGroupPage
+import com.example.miracleplan.screens.GroupDetailsPage
 import com.example.miracleplan.screens.GroupPage
 import com.example.miracleplan.screens.GroupSign
 import com.example.miracleplan.screens.GroupSignInPage
@@ -36,6 +38,8 @@ class MainActivity : ComponentActivity() {
                     composable("group") { GroupPage(navController) } // Group 화면
                     composable("record") { RecordPage(navController) } // Record 화면
                     composable("groupSignIn") { GroupSignInPage(navController) }
+                    composable("groupDetails") { GroupDetailsPage(navController) }
+                    composable("generatedGroup") { GeneratedGroupPage(navController) }
                 }
             }
         }
