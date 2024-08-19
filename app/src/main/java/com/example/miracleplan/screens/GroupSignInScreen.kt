@@ -37,6 +37,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,10 +61,10 @@ fun GroupSignInPage(navController: NavHostController = rememberNavController()) 
         GoBackSign {
             navController.navigate("group") // 페이지 이동
         }
-        GroupText()
+        TopText("그룹 이름을 알려주세요!", "다른 사용자들과 함께 미라클모닝을 실천해요.")
         GroupNameBox()
         Spacer(modifier = Modifier.weight(1f))
-        GroupGenerateButton(onClick = {navController.navigate("generatedGroup")})
+        DefaultButton(onClick = {navController.navigate("generatedGroup")}, "그룹 생성하기")
     }
 }
 
@@ -83,7 +86,7 @@ fun GoBackSign(onClick: () -> Unit) {
 }
 
 @Composable
-fun GroupText() {
+fun TopText(text1 : String, text2 : String) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -91,7 +94,7 @@ fun GroupText() {
             .padding(16.dp)
     ) {
         Text(
-            text = "그룹 이름을 알려주세요!",
+            text = text1,
             fontFamily = customFont,
             fontSize = 24.sp,
             lineHeight = 32.sp,
@@ -100,7 +103,7 @@ fun GroupText() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "다른 사용자들과 함께 미라클모닝을 실천해요.",
+            text = text2,
             fontSize = 16.sp,
             lineHeight = 24.sp,
             fontWeight = FontWeight.Medium,
@@ -176,8 +179,55 @@ fun TextField() {
     )
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupGenerateButton(onClick: () -> Unit) {
+fun PwTextField() {
+    val password = remember { mutableStateOf("") }
+    val isPasswordVisible = remember { mutableStateOf(false) }
+
+    androidx.compose.material3.TextField(
+        value = password.value,
+        onValueChange = { password.value = it },
+        placeholder = {
+            Text(
+                text = "입력해 주세요",
+                color = colorResource(id = R.color.gray),
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Medium,
+                letterSpacing = 0.091.sp,
+                fontFamily = customFont
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = colorResource(id = R.color.oulinecolor),
+                shape = RoundedCornerShape(12.dp)
+            ),
+        visualTransformation = if (isPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.091.sp,
+            color = colorResource(id = R.color.gray),
+
+
+        ),
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,  // 배경 투명
+            focusedIndicatorColor = Color.Transparent,  // 포커스 시 하단의 기본 색 제거
+            unfocusedIndicatorColor = Color.Transparent  // 비포커스 시 하단의 기본 색 제거
+        )
+    )
+}
+
+@Composable
+fun DefaultButton(onClick: () -> Unit, text: String) {
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -191,7 +241,7 @@ fun GroupGenerateButton(onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp), // 버튼의 모서리를 둥글게 설정 (선택 사항)
     ) {
         Text(
-            text = "그룹 생성하기",
+            text = text,
             fontSize = 16.sp,
             lineHeight = 24.sp,
             fontFamily = customFont,

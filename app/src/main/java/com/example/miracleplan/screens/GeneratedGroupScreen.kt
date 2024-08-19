@@ -282,11 +282,11 @@ fun GroupMemberBox(member: Member) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    MiracleplanTheme {
-        GeneratedGroupPage()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.P)
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        GeneratedGroupPage()
+//    }
+//}
