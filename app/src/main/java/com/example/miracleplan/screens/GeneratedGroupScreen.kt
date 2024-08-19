@@ -1,32 +1,15 @@
-package com.example.miracleplan.screens
-
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -41,6 +24,9 @@ import com.example.miracleplan.R
 import com.example.miracleplan.customFont
 import com.example.miracleplan.data.Member
 import com.example.miracleplan.data.members
+import com.example.miracleplan.screens.BetweenLayer
+import com.example.miracleplan.screens.CustomBottomNavigationBar
+import com.example.miracleplan.screens.GroupRank
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 import kotlinx.coroutines.launch
 
@@ -49,10 +35,10 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun GeneratedGroupPage(navController: NavHostController = rememberNavController()) {
-    val sheetState = rememberModalBottomSheetState(
-
-    )
+    val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     Scaffold {
         Box(
@@ -68,10 +54,8 @@ fun GeneratedGroupPage(navController: NavHostController = rememberNavController(
                 item {
                     GroupSignWithSetting(
                         onSettingClick = {
-                            // Coroutine을 사용하여 Bottom Sheet를 표시
-                            scope.launch {
-                                sheetState.show()
-                            }
+                            // 설정 아이콘 클릭 시 바텀시트 표시
+                            showBottomSheet = true
                         }
                     )
                 }
@@ -86,22 +70,58 @@ fun GeneratedGroupPage(navController: NavHostController = rememberNavController(
                 navController = navController
             )
         }
-    }
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {
-            // Bottom Sheet를 닫을 때 호출됨
-            scope.launch {
-                sheetState.hide()
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                sheetState = sheetState
+            ) {
+                // 바텀시트 내용
+                BottomSheet(
+                    onInviteClick = { /* 초대하기 로직 추가 */ },
+                    onLeaveClick = {
+                        scope.launch {
+                            sheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showBottomSheet = false
+                            }
+                        }
+                        isDialogVisible = true
+                    }
+                )
             }
         }
-    ) {
-        BottomSheet(
-            onInviteClick = { /* 초대하기 로직 추가 */ },
-            onLeaveClick = { /* 그룹 나가기 로직 추가 */ },
+    }
+
+    if (isDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { isDialogVisible = false },
+            title = { Text(text = "정말로 나가시겠습니까?") },
+            text = { Text("그룹에서 나가면 다시 초대를 받아야 합니다.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isDialogVisible = false
+                        // 그룹 나가기 로직 추가
+                    }
+                ) {
+                    Text("나가기")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { isDialogVisible = false }
+                ) {
+                    Text("취소")
+                }
+            }
         )
     }
 }
+
 
 @Composable
 fun BottomSheet(
