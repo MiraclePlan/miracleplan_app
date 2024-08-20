@@ -11,5 +11,5 @@
     <color name="litegray">#FFF0F2F5</color>
     <color name="green">#FF02C03B</color>
     <color name="red">#FFFF3333</color>
-    <color name="oulinecolor">#FFDADEE7</color>
+    <color name="outlinecolor">#FFDADEE7</color>
 </resources>

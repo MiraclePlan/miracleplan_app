@@ -153,7 +153,7 @@ fun AddButton(onClick: () -> Unit) {
                 .border(
                     width = 1.5.dp,
                     shape = RoundedCornerShape(8.dp),
-                    color = colorResource(id = R.color.oulinecolor)
+                    color = colorResource(id = R.color.outlinecolor)
                 ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.white),
@@ -182,7 +182,7 @@ fun CantClickButton(onClick: () -> Unit, modifier: Modifier = Modifier, isEnable
             .height(56.dp)
             .clickable(onClick = onClick),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isEnabled) colorResource(id = R.color.black) else colorResource(id = R.color.oulinecolor),
+            containerColor = if (isEnabled) colorResource(id = R.color.black) else colorResource(id = R.color.outlinecolor),
             contentColor = if (isEnabled) colorResource(id = R.color.white) else colorResource(id = R.color.gray)
         ),
         shape = RoundedCornerShape(12.dp),

@@ -161,7 +161,7 @@ fun TextField() {
             .fillMaxWidth()
             .border(
                 width = 2.dp,
-                color = colorResource(id = R.color.oulinecolor),
+                color = colorResource(id = R.color.outlinecolor),
                 shape = RoundedCornerShape(12.dp)
             ),
         textStyle = androidx.compose.ui.text.TextStyle(
@@ -205,7 +205,7 @@ fun PwTextField() {
             .fillMaxWidth()
             .border(
                 width = 2.dp,
-                color = colorResource(id = R.color.oulinecolor),
+                color = colorResource(id = R.color.outlinecolor),
                 shape = RoundedCornerShape(12.dp)
             ),
         visualTransformation = if (isPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),

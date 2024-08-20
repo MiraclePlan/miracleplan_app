@@ -3,21 +3,25 @@ package com.example.miracleplan.ui.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
-import com.example.miracleplan.customFont
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 import java.util.Calendar
 
@@ -46,6 +49,7 @@ fun SelectDatePage(navController: NavController = rememberNavController()) {
         GoBackSign {
             navController.navigate("login")
         }
+        TopText(text1 = "계획을 언제까지 도전하시나요?", text2 = "주영님에게 맞는 도전 캘린더를 제작해 드려요.")
         MonthSign(
             currentMonth = currentMonth.value,
             currentYear = currentYear.value,
@@ -55,25 +59,51 @@ fun SelectDatePage(navController: NavController = rememberNavController()) {
             }
         )
         SCalendarTable(month = currentMonth.value, year = currentYear.value)
+//        CantClickButton(
+//            onClick = { if () navController.navigate("todo")},
+//            isEnabled =
+//        )
     }
-
 }
 
 @Composable
-fun SWeekNumBox(dateNum: Int) {
+fun SWeekNumBox(
+    dateNum: Int,
+    isSelected: Boolean,
+    isBetweenSelected: Boolean,
+    isFirst: Boolean,
+    isLast: Boolean,
+    isRowStart: Boolean,
+    isRowEnd: Boolean,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .width(51.6.dp)
-            .height(62.dp)
-            .padding(10.dp),
+            .height(44.dp)
+            .background(
+                color = if (isSelected) colorResource(id = R.color.black) else Color.Transparent,
+                shape = if (isSelected) RoundedCornerShape(8.dp) else RoundedCornerShape(0.dp)
+            )
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .background(
+                    color = when {
+                        isSelected -> Color.Transparent
+                        isBetweenSelected -> colorResource(id = R.color.outlinecolor)
+                        else -> Color.Transparent
+                    },
+                    shape = when {
+                        isSelected -> RoundedCornerShape(8.dp)
+                        isBetweenSelected && isRowStart -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
+                        isBetweenSelected && isRowEnd -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+                        else -> RoundedCornerShape(0.dp)
+                    }
+                )
         ) {
             Text(
                 text = if (dateNum > 0) dateNum.toString() else "",
@@ -81,7 +111,12 @@ fun SWeekNumBox(dateNum: Int) {
                 lineHeight = 24.sp,
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 0.091.sp,
-                color = colorResource(id = R.color.gray)
+                color = when {
+                    isSelected -> colorResource(id = R.color.white)
+                    isBetweenSelected -> colorResource(id = R.color.gray)
+                    else -> colorResource(id = R.color.gray)
+                },
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }
@@ -94,10 +129,12 @@ fun SCalendarTable(month: Int, year: Int) {
     calendar.set(Calendar.MONTH, month)
     calendar.set(Calendar.DAY_OF_MONTH, 1)
 
-    val startDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // 해당 달의 첫 날 요일
-    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH) // 해당 달의 총 날짜 수
-    val rows = ((startDayOfWeek - 1) + daysInMonth + 6) / 7 // 7일 단위로 나누어 필요한 행 수 계산
-    val currentDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) // 현재 날짜
+    val startDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val rows = ((startDayOfWeek - 1) + daysInMonth + 6) / 7
+
+    var firstSelectedDate by remember { mutableStateOf<Int?>(null) }
+    var secondSelectedDate by remember { mutableStateOf<Int?>(null) }
 
     Column {
         RecordDateRow()
@@ -106,15 +143,47 @@ fun SCalendarTable(month: Int, year: Int) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(70.dp)
+                    .height(52.dp)
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 for (col in 0 until 7) {
                     val day = row * 7 + col + 1 - (startDayOfWeek - 1)
-                    SWeekNumBox(
-                        dateNum = if (day in 1..daysInMonth) day else 0
-                    )
+
+                    if (day in 1..daysInMonth) {
+                        val startDate = minOf(firstSelectedDate ?: 0, secondSelectedDate ?: 0)
+                        val endDate = maxOf(firstSelectedDate ?: 0, secondSelectedDate ?: 0)
+                        val isBetweenSelected = day in (startDate + 1) until endDate
+                        val isFirstOrSecondSelected = day == firstSelectedDate || day == secondSelectedDate
+                        val isFirst = day == minOf(firstSelectedDate ?: day, secondSelectedDate ?: day)
+                        val isLast = day == maxOf(firstSelectedDate ?: day, secondSelectedDate ?: day)
+
+                        // Determine if this is the first or last box in the row
+                        val isRowStart = col == 0
+                        val isRowEnd = col == 6
+
+                        SWeekNumBox(
+                            dateNum = day,
+                            isSelected = isFirstOrSecondSelected,
+                            isBetweenSelected = isBetweenSelected,
+                            isFirst = isFirst,
+                            isLast = isLast,
+                            isRowStart = isRowStart,
+                            isRowEnd = isRowEnd,
+                            onClick = {
+                                if (firstSelectedDate == null) {
+                                    firstSelectedDate = day
+                                } else if (secondSelectedDate == null) {
+                                    secondSelectedDate = day
+                                } else {
+                                    firstSelectedDate = day
+                                    secondSelectedDate = null
+                                }
+                            }
+                        )
+                    } else {
+                        SWeekNumBox(dateNum = 0, isSelected = false, isBetweenSelected = false, isFirst = false, isLast = false, isRowStart = false, isRowEnd = false, onClick = {})
+                    }
                 }
             }
         }
@@ -125,6 +194,56 @@ fun SCalendarTable(month: Int, year: Int) {
 
 
 
+
+
+
+
+
+//Box(
+//modifier = Modifier
+//.width(51.6.dp)
+//.height(44.dp)
+//.background(
+//color = if (isSelected) colorResource(id = R.color.outlinecolor) else Color.Transparent,
+//shape = when {
+//    isFirst && isLast -> RoundedCornerShape(0.dp)
+//    isFirst -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
+//    isLast -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+//    else -> RoundedCornerShape(0.dp)
+//}
+//
+//)
+//.clickable(onClick = onClick),
+//contentAlignment = Alignment.Center
+//) {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(
+//                color = when {
+//                    isSelected -> colorResource(id = R.color.black)
+//                    isBetweenSelected -> colorResource(id = R.color.outlinecolor)
+//                    else -> Color.Transparent
+//                },
+//                shape = if (!isSelected) RoundedCornerShape(0.dp) else RoundedCornerShape(8.dp)
+//
+//            )
+//    ) {
+//        Text(
+//            text = if (dateNum > 0) dateNum.toString() else "",
+//            fontSize = 16.sp,
+//            lineHeight = 24.sp,
+//            fontWeight = FontWeight.Medium,
+//            letterSpacing = 0.091.sp,
+//            color = when {
+//                isSelected -> colorResource(id = R.color.white)
+//                isBetweenSelected -> colorResource(id = R.color.gray)
+//                else -> colorResource(id = R.color.gray)
+//            },
+//            modifier = Modifier.align(Alignment.Center)
+//        )
+//    }
+//}
 
 
 
