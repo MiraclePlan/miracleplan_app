@@ -79,4 +79,5 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
 }

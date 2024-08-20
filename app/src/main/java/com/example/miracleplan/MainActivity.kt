@@ -25,6 +25,7 @@ import com.example.miracleplan.ui.screens.MainPage
 import com.example.miracleplan.ui.screens.RecordPage
 import com.example.miracleplan.ui.screens.RegisterPage
 import com.example.miracleplan.ui.screens.SelectDatePage
+import com.example.miracleplan.ui.screens.SignInCompletePage
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 
 
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MiracleplanTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "SignInComplete") {
                     composable("home") { MainPage(navController) } // Home 화면
                     composable("group") { GroupPage(navController) } // Group 화면
                     composable("record") { RecordPage(navController) } // Record 화면
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     composable("todo") { AddTodoListPage(navController) }
                     composable("SelectDate") { SelectDatePage(navController) }
                     composable("DetailRecord") { DetailRecordPage(navController) }
+                    composable("SignInComplete") { SignInCompletePage(navController) }
                 }
             }
         }

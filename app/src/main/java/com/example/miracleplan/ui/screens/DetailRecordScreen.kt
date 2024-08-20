@@ -91,11 +91,11 @@ fun RecordColumn() {
 
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun Preview() {
-    MiracleplanTheme {
-        DetailRecordPage()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        DetailRecordPage()
+//    }
+//}

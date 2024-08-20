@@ -77,7 +77,7 @@ fun AddTodoListPage(navController: NavHostController = rememberNavController()) 
 
         CantClickButton(
             onClick = {
-                if (isButtonEnabled) navController.navigate("home")
+                if (isButtonEnabled) navController.navigate("SignInComplete")
             },
             isEnabled = isButtonEnabled
         )

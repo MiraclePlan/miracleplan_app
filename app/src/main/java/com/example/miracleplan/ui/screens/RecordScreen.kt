@@ -50,7 +50,7 @@ fun RecordPage(navController: NavHostController = rememberNavController()) {
                     }
                 )
             }
-            item { CalendarTable(month = currentMonth.value, year = currentYear.value) }
+            item { CalendarTable(month = currentMonth.value, year = currentYear.value, navController = navController) }
         }
         CustomBottomNavigationBar(
             modifier = Modifier
@@ -134,7 +134,7 @@ fun MonthSign(currentMonth: Int, currentYear: Int, onMonthChange: (Int, Int) -> 
 }
 
 @Composable
-fun CalendarTable(month: Int, year: Int) {
+fun CalendarTable(month: Int, year: Int, navController: NavHostController) {
     val calendar = Calendar.getInstance()
     calendar.set(Calendar.YEAR, year)
     calendar.set(Calendar.MONTH, month)
@@ -161,7 +161,13 @@ fun CalendarTable(month: Int, year: Int) {
                     WeekNumBox(
                         dateNum = if (day in 1..daysInMonth) day else 0,
                         currentDate = currentDate,
-                        status = if (day % 2 == 0) "성공" else "실패"
+                        status = if (day % 2 == 0) "성공" else "실패",
+                        onClick = {
+                            if (day > 0) {
+                                // Navigate to DetailRecord page
+                                navController.navigate("DetailRecord")
+                            }
+                        }
                     )
                 }
             }
@@ -207,7 +213,7 @@ fun WeekBox(day: String) {
 }
 
 @Composable
-fun WeekNumBox(dateNum: Int, currentDate: Int, status: String) {
+fun WeekNumBox(dateNum: Int, currentDate: Int, status: String, onClick: () -> Unit) {
     val statusColor = when {
         dateNum == 0 -> Color.Transparent
         dateNum > currentDate -> colorResource(id = R.color.gray)
@@ -224,7 +230,8 @@ fun WeekNumBox(dateNum: Int, currentDate: Int, status: String) {
         modifier = Modifier
             .width(51.6.dp)
             .height(62.dp)
-            .padding(10.dp),
+            .padding(10.dp)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Column(
