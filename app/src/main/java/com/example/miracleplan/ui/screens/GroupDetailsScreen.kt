@@ -45,7 +45,7 @@ fun GroupDetailsPage(navController: NavHostController = rememberNavController())
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            DetailRow{ navController.navigate("group") }
+            DetailRow({ navController.navigate("group")}, "상세보기")
             GroupMemberRow()
             BetweenLayer()
             GroupRank(navController, showIcon = false)
@@ -57,7 +57,7 @@ fun GroupDetailsPage(navController: NavHostController = rememberNavController())
 }
 
 @Composable
-fun DetailRow(onClick: () -> Unit) {
+fun DetailRow(onClick: () -> Unit, text: String) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -72,7 +72,7 @@ fun DetailRow(onClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = "상세 보기",
+            text = text,
             fontSize = 20.sp,
             lineHeight = 28.sp,
             fontWeight = FontWeight.Bold,

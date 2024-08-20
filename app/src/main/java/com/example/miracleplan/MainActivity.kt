@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.ui.screens.AddTodoListPage
+import com.example.miracleplan.ui.screens.DetailRecordPage
 import com.example.miracleplan.ui.screens.GroupDetailsPage
 import com.example.miracleplan.ui.screens.GroupPage
 import com.example.miracleplan.ui.screens.GroupSign
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
                     composable("register") { RegisterPage(navController) }
                     composable("todo") { AddTodoListPage(navController) }
                     composable("SelectDate") { SelectDatePage(navController) }
+                    composable("DetailRecord") { DetailRecordPage(navController) }
                 }
             }
         }

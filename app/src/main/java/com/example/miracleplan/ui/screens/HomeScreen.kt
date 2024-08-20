@@ -122,9 +122,7 @@ fun ChallengeBox() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateNumRow() {
-    // 현재 날짜 가져오기
     val today = remember { LocalDate.now() }
-    // 현재 날짜에서 -3일부터 +3일까지의 날짜 리스트 생성
     val dates = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
 
     Row(
@@ -142,9 +140,7 @@ fun DateNumRow() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateRow() {
-    // 현재 날짜 가져오기
     val today = remember { LocalDate.now() }
-    // 현재 날짜에서 -3일부터 +3일까지의 요일 리스트 생성
     val weekdays = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
 
     Row(

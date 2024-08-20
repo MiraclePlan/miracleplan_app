@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,15 +42,22 @@ fun SelectDatePage(navController: NavController = rememberNavController()) {
     val calendar = remember { Calendar.getInstance() }
     val currentMonth = remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
     val currentYear = remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var firstSelectedDate by remember { mutableStateOf<Int?>(null) }
+    var secondSelectedDate by remember { mutableStateOf<Int?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white))
+            .background(color = colorResource(id = R.color.white)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         GoBackSign {
             navController.navigate("login")
         }
-        TopText(text1 = "계획을 언제까지 도전하시나요?", text2 = "주영님에게 맞는 도전 캘린더를 제작해 드려요.")
+        TopText(
+            text1 = "계획을 언제까지 도전하시나요?",
+            text2 = "주영님에게 맞는 도전 캘린더를 제작해 드려요."
+        )
         MonthSign(
             currentMonth = currentMonth.value,
             currentYear = currentYear.value,
@@ -58,11 +66,25 @@ fun SelectDatePage(navController: NavController = rememberNavController()) {
                 currentYear.value = newYear
             }
         )
-        SCalendarTable(month = currentMonth.value, year = currentYear.value)
-//        CantClickButton(
-//            onClick = { if () navController.navigate("todo")},
-//            isEnabled =
-//        )
+        SCalendarTable(
+            month = currentMonth.value,
+            year = currentYear.value,
+            onDateSelected = { first, second ->
+                firstSelectedDate = first
+                secondSelectedDate = second
+            }
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        CantClickButton(
+            onClick = {
+                if (firstSelectedDate != null && secondSelectedDate != null) {
+                    navController.navigate("todo")
+                }
+            },
+            isEnabled = firstSelectedDate != null && secondSelectedDate != null
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+
     }
 }
 
@@ -71,8 +93,6 @@ fun SWeekNumBox(
     dateNum: Int,
     isSelected: Boolean,
     isBetweenSelected: Boolean,
-    isFirst: Boolean,
-    isLast: Boolean,
     isRowStart: Boolean,
     isRowEnd: Boolean,
     onClick: () -> Unit
@@ -99,8 +119,16 @@ fun SWeekNumBox(
                     },
                     shape = when {
                         isSelected -> RoundedCornerShape(8.dp)
-                        isBetweenSelected && isRowStart -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
-                        isBetweenSelected && isRowEnd -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+                        isBetweenSelected && isRowStart -> RoundedCornerShape(
+                            topStart = 8.dp,
+                            bottomStart = 8.dp
+                        )
+
+                        isBetweenSelected && isRowEnd -> RoundedCornerShape(
+                            topEnd = 8.dp,
+                            bottomEnd = 8.dp
+                        )
+
                         else -> RoundedCornerShape(0.dp)
                     }
                 )
@@ -123,7 +151,11 @@ fun SWeekNumBox(
 }
 
 @Composable
-fun SCalendarTable(month: Int, year: Int) {
+fun SCalendarTable(
+    month: Int,
+    year: Int,
+    onDateSelected: (Int?, Int?) -> Unit
+) {
     val calendar = Calendar.getInstance()
     calendar.set(Calendar.YEAR, year)
     calendar.set(Calendar.MONTH, month)
@@ -155,10 +187,6 @@ fun SCalendarTable(month: Int, year: Int) {
                         val endDate = maxOf(firstSelectedDate ?: 0, secondSelectedDate ?: 0)
                         val isBetweenSelected = day in (startDate + 1) until endDate
                         val isFirstOrSecondSelected = day == firstSelectedDate || day == secondSelectedDate
-                        val isFirst = day == minOf(firstSelectedDate ?: day, secondSelectedDate ?: day)
-                        val isLast = day == maxOf(firstSelectedDate ?: day, secondSelectedDate ?: day)
-
-                        // Determine if this is the first or last box in the row
                         val isRowStart = col == 0
                         val isRowEnd = col == 6
 
@@ -166,8 +194,6 @@ fun SCalendarTable(month: Int, year: Int) {
                             dateNum = day,
                             isSelected = isFirstOrSecondSelected,
                             isBetweenSelected = isBetweenSelected,
-                            isFirst = isFirst,
-                            isLast = isLast,
                             isRowStart = isRowStart,
                             isRowEnd = isRowEnd,
                             onClick = {
@@ -179,10 +205,18 @@ fun SCalendarTable(month: Int, year: Int) {
                                     firstSelectedDate = day
                                     secondSelectedDate = null
                                 }
+                                onDateSelected(firstSelectedDate, secondSelectedDate)
                             }
                         )
                     } else {
-                        SWeekNumBox(dateNum = 0, isSelected = false, isBetweenSelected = false, isFirst = false, isLast = false, isRowStart = false, isRowEnd = false, onClick = {})
+                        SWeekNumBox(
+                            dateNum = 0,
+                            isSelected = false,
+                            isBetweenSelected = false,
+                            isRowStart = false,
+                            isRowEnd = false,
+                            onClick = {}
+                        )
                     }
                 }
             }
@@ -193,65 +227,11 @@ fun SCalendarTable(month: Int, year: Int) {
 
 
 
-
-
-
-
-
-
-//Box(
-//modifier = Modifier
-//.width(51.6.dp)
-//.height(44.dp)
-//.background(
-//color = if (isSelected) colorResource(id = R.color.outlinecolor) else Color.Transparent,
-//shape = when {
-//    isFirst && isLast -> RoundedCornerShape(0.dp)
-//    isFirst -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
-//    isLast -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
-//    else -> RoundedCornerShape(0.dp)
-//}
-//
-//)
-//.clickable(onClick = onClick),
-//contentAlignment = Alignment.Center
-//) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(
-//                color = when {
-//                    isSelected -> colorResource(id = R.color.black)
-//                    isBetweenSelected -> colorResource(id = R.color.outlinecolor)
-//                    else -> Color.Transparent
-//                },
-//                shape = if (!isSelected) RoundedCornerShape(0.dp) else RoundedCornerShape(8.dp)
-//
-//            )
-//    ) {
-//        Text(
-//            text = if (dateNum > 0) dateNum.toString() else "",
-//            fontSize = 16.sp,
-//            lineHeight = 24.sp,
-//            fontWeight = FontWeight.Medium,
-//            letterSpacing = 0.091.sp,
-//            color = when {
-//                isSelected -> colorResource(id = R.color.white)
-//                isBetweenSelected -> colorResource(id = R.color.gray)
-//                else -> colorResource(id = R.color.gray)
-//            },
-//            modifier = Modifier.align(Alignment.Center)
-//        )
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview
+//@Composable
+//fun Preview() {
+//    MiracleplanTheme {
+//        SelectDatePage()
 //    }
 //}
-
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun Preview() {
-    MiracleplanTheme {
-        SelectDatePage()
-    }
-}

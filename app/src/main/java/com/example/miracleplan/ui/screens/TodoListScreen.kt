@@ -56,7 +56,7 @@ fun AddTodoListPage(navController: NavHostController = rememberNavController()) 
     ) {
 
         GoBackSign {
-            navController.navigate("login")
+            navController.navigate("SelectDate")
         }
         TopText("주영님의 계획을 알려주세요!", "주영님만의 미라클 투두리스트를 만들어보세요.")
         LazyColumn {
@@ -73,8 +73,6 @@ fun AddTodoListPage(navController: NavHostController = rememberNavController()) 
                 }
             }
         }
-
-
         Spacer(modifier = Modifier.weight(1f))
 
         CantClickButton(
