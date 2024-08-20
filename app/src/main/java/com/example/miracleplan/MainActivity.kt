@@ -1,6 +1,5 @@
 package com.example.miracleplan
 
-import TimePickerPage
 import GeneratedGroupPage
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +22,7 @@ import com.example.miracleplan.ui.screens.LoginPage
 import com.example.miracleplan.ui.screens.MainPage
 import com.example.miracleplan.ui.screens.RecordPage
 import com.example.miracleplan.ui.screens.RegisterPage
+import com.example.miracleplan.ui.screens.SelectDatePage
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 
 
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     composable("login") { LoginPage(navController) }
                     composable("register") { RegisterPage(navController) }
                     composable("todo") { AddTodoListPage(navController) }
-                    composable("timePicker") {TimePickerPage(navController)}
+                    composable("SelectDate") { SelectDatePage(navController) }
                 }
             }
         }

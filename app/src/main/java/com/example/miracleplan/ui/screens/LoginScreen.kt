@@ -167,11 +167,3 @@ fun SignInText(navController: NavHostController) {
 
 
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview
-//@Composable
-//fun Preview() {
-//    MiracleplanTheme {
-//        LoginPage()
-//    }
-//}
