@@ -35,7 +35,6 @@ import com.example.miracleplan.data.members
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 import java.time.LocalDate
 
-private val BoxWidth = 393.dp
 private val ItemHeight = 52.dp
 internal val PaddingHorizontal = 16.dp
 internal val PaddingVertical = 12.dp
@@ -109,7 +108,7 @@ fun TodaySign(modifier: Modifier = Modifier) {
 fun ChallengeBox() {
     Column(
         modifier = Modifier
-            .width(BoxWidth)
+            .fillMaxWidth()
             .height(156.dp)
             .padding(top = 8.dp, bottom = 16.dp)
             .background(color = colorResource(id = R.color.white))
@@ -150,7 +149,7 @@ fun DateRow() {
 
     Row(
         modifier = Modifier
-            .width(BoxWidth)
+            .fillMaxWidth()
             .height(40.dp)
             .padding(horizontal = PaddingHorizontal, vertical = 4.dp)
     ) {
@@ -201,7 +200,7 @@ fun SuccessfulStatusRow() {
     Box(
         modifier = Modifier
             .height(44.dp)
-            .width(BoxWidth)
+            .fillMaxWidth()
             .padding(horizontal = PaddingHorizontal, vertical = 8.dp)
     ) {
         Row {
@@ -273,7 +272,7 @@ fun DateNumBox(num: Int, isCenter: Boolean) {
 fun BetweenLayer() {
     Box(
         modifier = Modifier
-            .width(BoxWidth)
+            .fillMaxWidth()
             .height(8.dp)
             .background(color = colorResource(id = R.color.litegray))
     )
@@ -350,10 +349,6 @@ fun AchievementList() {
         "아침 운동하기",
         "독서 30분",
         "코딩 공부 1시간",
-        "청소하기",
-        "저녁 산책",
-        "명상하기",
-        "가족과 시간 보내기"
     )
 
     Column(
@@ -362,7 +357,7 @@ fun AchievementList() {
     ) {
         Row(
             modifier = Modifier
-                .width(BoxWidth)
+                .fillMaxWidth()
                 .height(ItemHeight)
                 .padding(vertical = PaddingVertical, horizontal = PaddingHorizontal)
         ) {

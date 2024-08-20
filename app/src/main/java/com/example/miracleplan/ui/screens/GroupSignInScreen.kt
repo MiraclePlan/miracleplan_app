@@ -64,13 +64,14 @@ fun GroupSignInPage(navController: NavHostController = rememberNavController()) 
         TopText("그룹 이름을 알려주세요!", "다른 사용자들과 함께 미라클모닝을 실천해요.")
         GroupNameBox()
         Spacer(modifier = Modifier.weight(1f))
-        DefaultButton(onClick = {navController.navigate("generatedGroup")}, "그룹 생성하기")
+        DefaultButton(onClick = { navController.navigate("generatedGroup") }, "그룹 생성하기")
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
 @Composable
 fun GoBackSign(onClick: () -> Unit) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
@@ -86,8 +87,8 @@ fun GoBackSign(onClick: () -> Unit) {
 }
 
 @Composable
-fun TopText(text1 : String, text2 : String) {
-    Column (
+fun TopText(text1: String, text2: String) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(96.dp)
@@ -114,7 +115,6 @@ fun TopText(text1 : String, text2 : String) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupNameBox() {
     Column(
@@ -219,12 +219,13 @@ fun PwTextField() {
 
         ),
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.Transparent,  // 배경 투명
-            focusedIndicatorColor = Color.Transparent,  // 포커스 시 하단의 기본 색 제거
-            unfocusedIndicatorColor = Color.Transparent  // 비포커스 시 하단의 기본 색 제거
+            containerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
         )
     )
 }
+
 
 @Composable
 fun DefaultButton(onClick: () -> Unit, text: String) {

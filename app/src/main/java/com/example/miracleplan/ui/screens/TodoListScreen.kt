@@ -48,46 +48,42 @@ fun AddTodoListPage(navController: NavHostController = rememberNavController()) 
     val todoList = remember { mutableStateListOf<String>() }
     val isButtonEnabled = todoList.any { it.isNotBlank() }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white))
+            .background(color = colorResource(id = R.color.white)),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = colorResource(id = R.color.white))
-                .padding(bottom = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            GoBackSign {
-                navController.navigate("login")
+
+        GoBackSign {
+            navController.navigate("login")
+        }
+        TopText("주영님의 계획을 알려주세요!", "주영님만의 미라클 투두리스트를 만들어보세요.")
+        LazyColumn {
+            items(todoList.size) { index ->
+                TodoAddBox(
+                    text = todoList[index],
+                    onTextChange = { newText -> todoList[index] = newText }
+                )
             }
-            TopText("주영님의 계획을 알려주세요!", "주영님만의 미라클 투두리스트를 만들어보세요.")
-            LazyColumn {
-                items(todoList.size) { index ->
-                    TodoAddBox(
-                        text = todoList[index],
-                        onTextChange = { newText -> todoList[index] = newText }
-                    )
-                }
-                item { Spacer(modifier = Modifier.height(8.dp)) }
-                item {
-                    AddButton {
-                        todoList.add("") // Add an empty item to the list
-                    }
+            item { Spacer(modifier = Modifier.height(8.dp)) }
+            item {
+                AddButton {
+                    todoList.add("") // Add an empty item to the list
                 }
             }
         }
+
+
+        Spacer(modifier = Modifier.weight(1f))
 
         CantClickButton(
             onClick = {
                 if (isButtonEnabled) navController.navigate("home")
             },
-            modifier = Modifier
-                .align(Alignment.BottomCenter),
             isEnabled = isButtonEnabled
         )
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -148,7 +144,7 @@ fun AddButton(onClick: () -> Unit) {
         Button(
             onClick = onClick,
             modifier = Modifier
-                .width(361.dp)
+                .fillMaxWidth()
                 .height(56.dp)
                 .border(
                     width = 1.5.dp,

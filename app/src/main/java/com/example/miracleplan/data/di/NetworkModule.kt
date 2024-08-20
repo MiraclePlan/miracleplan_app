@@ -23,7 +23,7 @@ object NetworkModule {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://api.example.com/")
+        .baseUrl("https://jeongwoo-babo.doyun.dev")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

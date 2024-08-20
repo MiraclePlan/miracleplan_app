@@ -20,6 +20,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -29,11 +33,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
 import com.example.miracleplan.customFont
 import com.example.miracleplan.ui.theme.MiracleplanTheme
+import com.example.miracleplan.ui.viewmodel.AuthViewModel
 import java.time.format.TextStyle
 
 
@@ -55,6 +61,7 @@ fun LoginPage(navController: NavHostController = rememberNavController()) {
 
 @Composable
 fun MiracleplanSign() {
+    Spacer(modifier = Modifier.height(60.dp))
     Text(
         text = "미라클플랜에\n오신 걸 환영해요!",
         fontSize = 24.sp,
@@ -129,7 +136,7 @@ fun LoginButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .width(361.dp)
+            .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.black),
@@ -164,7 +171,6 @@ fun SignInText(navController: NavHostController) {
         }
     )
 }
-
 
 
 //@RequiresApi(Build.VERSION_CODES.O)

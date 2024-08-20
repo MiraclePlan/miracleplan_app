@@ -15,6 +15,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -25,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
 import com.example.miracleplan.customFont
+import com.example.miracleplan.ui.viewmodel.AuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -98,6 +101,7 @@ fun RegisterBox(navController: NavController) {
     RegisterButton(onClick = {
         navController.navigate("login")
     })
+    Spacer(modifier = Modifier.height(12.dp))
 }
 
 @Composable
@@ -105,8 +109,9 @@ fun RegisterButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .width(361.dp)
-            .height(56.dp),
+            .fillMaxWidth()
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.black),
             contentColor = colorResource(id = R.color.white)

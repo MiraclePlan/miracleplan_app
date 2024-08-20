@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     composable("login") { LoginPage(navController) }
                     composable("register") { RegisterPage(navController) }
                     composable("todo") { AddTodoListPage(navController) }
-                    composable("timePicker") {TimePickerPage(navController)}
+                    composable("timePicker") { TimePickerPage(navController) }
                 }
             }
         }
