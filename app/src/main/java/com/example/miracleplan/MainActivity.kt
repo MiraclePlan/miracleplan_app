@@ -14,14 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.miracleplan.screens.AddTodoListPage
-import com.example.miracleplan.screens.GroupDetailsPage
-import com.example.miracleplan.screens.GroupPage
-import com.example.miracleplan.screens.GroupSign
-import com.example.miracleplan.screens.GroupSignInPage
-import com.example.miracleplan.screens.LoginPage
-import com.example.miracleplan.screens.MainPage
-import com.example.miracleplan.screens.RecordPage
+import com.example.miracleplan.ui.screens.AddTodoListPage
+import com.example.miracleplan.ui.screens.GroupDetailsPage
+import com.example.miracleplan.ui.screens.GroupPage
+import com.example.miracleplan.ui.screens.GroupSign
+import com.example.miracleplan.ui.screens.GroupSignInPage
+import com.example.miracleplan.ui.screens.LoginPage
+import com.example.miracleplan.ui.screens.MainPage
+import com.example.miracleplan.ui.screens.RecordPage
+import com.example.miracleplan.ui.screens.RegisterPage
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 
 
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     composable("groupDetails") { GroupDetailsPage(navController) }
                     composable("generatedGroup") { GeneratedGroupPage(navController) }
                     composable("login") { LoginPage(navController) }
+                    composable("register") { RegisterPage(navController) }
                     composable("todo") { AddTodoListPage(navController) }
                     composable("timePicker") {TimePickerPage(navController)}
                 }

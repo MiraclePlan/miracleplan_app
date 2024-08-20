@@ -15,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
-import com.example.miracleplan.screens.DefaultButton
-import com.example.miracleplan.screens.GoBackSign
-import com.example.miracleplan.screens.TopText
+import com.example.miracleplan.ui.screens.DefaultButton
+import com.example.miracleplan.ui.screens.GoBackSign
+import com.example.miracleplan.ui.screens.TopText
 
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.miracleplan.screens
+package com.example.miracleplan.ui.screens
 
 import GroupMemberRow
 import android.os.Build

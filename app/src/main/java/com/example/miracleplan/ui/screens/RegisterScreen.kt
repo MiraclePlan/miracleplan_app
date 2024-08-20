@@ -1,60 +1,49 @@
-package com.example.miracleplan.screens
+package com.example.miracleplan.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
 import com.example.miracleplan.customFont
-import com.example.miracleplan.ui.theme.MiracleplanTheme
-import java.time.format.TextStyle
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LoginPage(navController: NavHostController = rememberNavController()) {
-    Column (
+fun RegisterPage(navController: NavController = rememberNavController()) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.white)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MiracleplanSign()
-        IdPwInputBox()
+        RegisterTitle()
+        InputBox()
         Spacer(modifier = Modifier.weight(1f))
-        LoginOrSignInBox(navController)
+        RegisterBox(navController)
     }
 }
 
 @Composable
-fun MiracleplanSign() {
+fun RegisterTitle() {
     Text(
         text = "미라클플랜에\n오신 걸 환영해요!",
         fontSize = 24.sp,
@@ -71,7 +60,7 @@ fun MiracleplanSign() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun IdPwInputBox() {
+fun InputBox() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,28 +93,15 @@ fun IdPwInputBox() {
     }
 }
 
-
-
 @Composable
-fun LoginOrSignInBox(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(116.dp)
-            .padding(vertical = 12.dp, horizontal = 16.dp)
-            .imePadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LoginButton(onClick = {
-            navController.navigate("todo")
-        })
-        Spacer(modifier = Modifier.height(12.dp))
-        SignInText()
-    }
+fun RegisterBox(navController: NavController) {
+    RegisterButton(onClick = {
+        navController.navigate("login")
+    })
 }
 
 @Composable
-fun LoginButton(onClick: () -> Unit) {
+fun RegisterButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -138,7 +114,7 @@ fun LoginButton(onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp),
     ) {
         Text(
-            text = "로그인",
+            text = "회원가입",
             fontSize = 16.sp,
             lineHeight = 24.sp,
             fontFamily = customFont,
@@ -147,29 +123,3 @@ fun LoginButton(onClick: () -> Unit) {
         )
     }
 }
-
-@Composable
-fun SignInText() {
-    Text(
-        text = "계정이 없다면? 회원가입",
-        fontFamily = customFont,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.091.sp,
-        fontWeight = FontWeight.Bold,
-        textDecoration = TextDecoration.Underline,
-        color = colorResource(id = R.color.gray),
-        modifier = Modifier.clickable {  }
-    )
-}
-
-
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Preview
-//@Composable
-//fun Preview() {
-//    MiracleplanTheme {
-//        LoginPage()
-//    }
-//}

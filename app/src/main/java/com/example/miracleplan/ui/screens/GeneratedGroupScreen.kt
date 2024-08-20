@@ -24,9 +24,9 @@ import com.example.miracleplan.R
 import com.example.miracleplan.customFont
 import com.example.miracleplan.data.Member
 import com.example.miracleplan.data.members
-import com.example.miracleplan.screens.BetweenLayer
-import com.example.miracleplan.screens.CustomBottomNavigationBar
-import com.example.miracleplan.screens.GroupRank
+import com.example.miracleplan.ui.screens.BetweenLayer
+import com.example.miracleplan.ui.screens.CustomBottomNavigationBar
+import com.example.miracleplan.ui.screens.GroupRank
 import com.example.miracleplan.ui.theme.MiracleplanTheme
 import kotlinx.coroutines.launch
 
@@ -99,12 +99,13 @@ fun GeneratedGroupPage(navController: NavHostController = rememberNavController(
     if (isDialogVisible) {
         AlertDialog(
             onDismissRequest = { isDialogVisible = false },
-            title = { Text(text = "정말로 나가시겠습니까?") },
-            text = { Text("그룹에서 나가면 다시 초대를 받아야 합니다.") },
+            title = { Text(text = "정말로 나가시겠어요?") },
+            text = { Text("그룹을 나가시면 포인트는 초기화돼요.") },
             confirmButton = {
                 TextButton(
                     onClick = {
                         isDialogVisible = false
+                        navController.navigate("group")
                         // 그룹 나가기 로직 추가
                     }
                 ) {
@@ -121,7 +122,6 @@ fun GeneratedGroupPage(navController: NavHostController = rememberNavController(
         )
     }
 }
-
 
 @Composable
 fun BottomSheet(
@@ -282,11 +282,3 @@ fun GroupMemberBox(member: Member) {
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.P)
-//@Preview(showBackground = true)
-//@Composable
-//fun Preview() {
-//    MiracleplanTheme {
-//        GeneratedGroupPage()
-//    }
-//}

@@ -1,30 +1,34 @@
-package com.example.miracleplan.screens
+package com.example.miracleplan.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.miracleplan.R
 import com.example.miracleplan.customFont
-import com.example.miracleplan.ui.theme.MiracleplanTheme
+import java.util.Calendar
 
 @Composable
 fun RecordPage(navController: NavHostController = rememberNavController()) {
+    val calendar = remember { Calendar.getInstance() }
+    val currentMonth = remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
+    val currentYear = remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -36,8 +40,17 @@ fun RecordPage(navController: NavHostController = rememberNavController()) {
                 .padding(bottom = 60.dp)
         ) {
             item { RecordSign() }
-            item { MonthSign() }
-            item { Calendar() }
+            item {
+                MonthSign(
+                    currentMonth = currentMonth.value,
+                    currentYear = currentYear.value,
+                    onMonthChange = { newMonth, newYear ->
+                        currentMonth.value = newMonth
+                        currentYear.value = newYear
+                    }
+                )
+            }
+            item { CalendarTable(month = currentMonth.value, year = currentYear.value) }
         }
         CustomBottomNavigationBar(
             modifier = Modifier
@@ -78,7 +91,11 @@ fun RecordSign() {
 }
 
 @Composable
-fun MonthSign() {
+fun MonthSign(currentMonth: Int, currentYear: Int, onMonthChange: (Int, Int) -> Unit) {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.MONTH, currentMonth)
+    calendar.set(Calendar.YEAR, currentYear)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,9 +108,13 @@ fun MonthSign() {
         Icon(
             painter = painterResource(id = R.drawable.leftaroow),
             contentDescription = "이전 달로 이동",
+            modifier = Modifier.clickable {
+                calendar.add(Calendar.MONTH, -1)
+                onMonthChange(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))
+            }
         )
         Text(
-            text = "8월",
+            text = "${currentMonth + 1}월",
             fontSize = 20.sp,
             lineHeight = 28.sp,
             fontFamily = customFont,
@@ -104,17 +125,25 @@ fun MonthSign() {
         Icon(
             painter = painterResource(id = R.drawable.rightarrow),
             contentDescription = "다음 달로 이동",
+            modifier = Modifier.clickable {
+                calendar.add(Calendar.MONTH, 1)
+                onMonthChange(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))
+            }
         )
     }
 }
 
 @Composable
-fun Calendar() {
-    val daysInMonth = 31 // 이 달의 총 날짜 수
-    val startDay = 1
-    val endDay = daysInMonth
-    val rows = (endDay - startDay + 6) / 7 // 7일 단위로 나누어 필요한 행 수 계산
-    val currentDate = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH) // 현재 날짜
+fun CalendarTable(month: Int, year: Int) {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.YEAR, year)
+    calendar.set(Calendar.MONTH, month)
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
+
+    val startDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // 해당 달의 첫 날 요일
+    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH) // 해당 달의 총 날짜 수
+    val rows = ((startDayOfWeek - 1) + daysInMonth + 6) / 7 // 7일 단위로 나누어 필요한 행 수 계산
+    val currentDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) // 현재 날짜
 
     Column {
         RecordDateRow()
@@ -128,8 +157,12 @@ fun Calendar() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 for (col in 0 until 7) {
-                    val day = row * 7 + col + 1
-                    WeekNumBox(dateNum = if (day in startDay..endDay) day else 0, currentDate = currentDate, status = if (day % 2 == 0) "성공" else "실패")
+                    val day = row * 7 + col + 1 - (startDayOfWeek - 1)
+                    WeekNumBox(
+                        dateNum = if (day in 1..daysInMonth) day else 0,
+                        currentDate = currentDate,
+                        status = if (day % 2 == 0) "성공" else "실패"
+                    )
                 }
             }
         }
@@ -138,7 +171,7 @@ fun Calendar() {
 
 @Composable
 fun RecordDateRow() {
-    val dateLabels = listOf("월", "화", "수", "목", "금", "토", "일")
+    val dateLabels = listOf("일", "월", "화", "수", "목", "금", "토")
 
     Row(
         modifier = Modifier
@@ -221,13 +254,3 @@ fun WeekNumBox(dateNum: Int, currentDate: Int, status: String) {
         }
     }
 }
-
-
-//@RequiresApi(Build.VERSION_CODES.P)
-//@Preview(showBackground = true)
-//@Composable
-//fun Preview() {
-//    MiracleplanTheme {
-//        MainPage()
-//    }
-//}

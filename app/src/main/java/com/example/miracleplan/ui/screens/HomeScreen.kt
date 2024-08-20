@@ -1,4 +1,4 @@
-package com.example.miracleplan.screens
+package com.example.miracleplan.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -120,22 +120,60 @@ fun ChallengeBox() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DateNumRow() {
+    // 현재 날짜 가져오기
+    val today = remember { LocalDate.now() }
+    // 현재 날짜에서 -3일부터 +3일까지의 날짜 리스트 생성
+    val dates = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(vertical = 4.dp, horizontal = PaddingHorizontal)
+    ) {
+        dates.forEachIndexed { index, date ->
+            DateNumBox(date.dayOfMonth, isCenter = index == 3)
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateRow() {
-    Box(
+    // 현재 날짜 가져오기
+    val today = remember { LocalDate.now() }
+    // 현재 날짜에서 -3일부터 +3일까지의 요일 리스트 생성
+    val weekdays = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
+
+    Row(
         modifier = Modifier
             .width(BoxWidth)
             .height(40.dp)
             .padding(horizontal = PaddingHorizontal, vertical = 4.dp)
     ) {
-        Row {
-            val dates = listOf("월", "화", "수", "목", "금", "토", "일")
-            dates.forEach { date ->
-                DateBox(date)
-            }
+        weekdays.forEach { date ->
+            val koreanWeekday = getKoreanDayOfWeek(date.dayOfWeek)
+            DateBox(koreanWeekday)
         }
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getKoreanDayOfWeek(dayOfWeek: java.time.DayOfWeek): String {
+    return when (dayOfWeek) {
+        java.time.DayOfWeek.MONDAY -> "월"
+        java.time.DayOfWeek.TUESDAY -> "화"
+        java.time.DayOfWeek.WEDNESDAY -> "수"
+        java.time.DayOfWeek.THURSDAY -> "목"
+        java.time.DayOfWeek.FRIDAY -> "금"
+        java.time.DayOfWeek.SATURDAY -> "토"
+        java.time.DayOfWeek.SUNDAY -> "일"
+    }
+}
+
 
 @Composable
 fun DateBox(date: String) {
@@ -200,26 +238,6 @@ fun SuccessfulStatusBox(status: String) {
             color = textColor,
             fontWeight = FontWeight.Bold
         )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun DateNumRow() {
-    // 현재 날짜 가져오기
-    val today = remember { LocalDate.now() }
-    // 현재 날짜에서 -3일부터 +3일까지의 날짜 리스트 생성
-    val dates = (0..6).map { today.minusDays(3).plusDays(it.toLong()) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(vertical = 4.dp, horizontal = PaddingHorizontal)
-    ) {
-        dates.forEachIndexed { index, date ->
-            DateNumBox(date.dayOfMonth, isCenter = index == 3)
-        }
     }
 }
 
@@ -412,7 +430,8 @@ fun GroupRank(navController: NavController, showIcon: Boolean = true) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ItemHeight)
-                .padding(vertical = PaddingVertical, horizontal = PaddingHorizontal),
+                .padding(vertical = PaddingVertical, horizontal = PaddingHorizontal)
+                .clickable { navController.navigate("group") },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -432,7 +451,6 @@ fun GroupRank(navController: NavController, showIcon: Boolean = true) {
                     tint = colorResource(id = R.color.gray),
                     modifier = Modifier
                         .padding(start = 16.dp)
-                        .clickable { navController.navigate("group") }
                 )
             }
         }
@@ -441,7 +459,6 @@ fun GroupRank(navController: NavController, showIcon: Boolean = true) {
         }
     }
 }
-
 
 
 @RequiresApi(Build.VERSION_CODES.P)

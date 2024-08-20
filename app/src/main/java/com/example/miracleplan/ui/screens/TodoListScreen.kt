@@ -1,4 +1,4 @@
-package com.example.miracleplan.screens
+package com.example.miracleplan.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
