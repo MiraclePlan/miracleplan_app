@@ -42,7 +42,6 @@ fun GroupPage(navController: NavHostController = rememberNavController()) {
         GroupInfo(groupName = "선린일짱", wakeUpTime = 830, peopleCount = 3),
         GroupInfo(groupName = "2학년 5반", wakeUpTime = 920, peopleCount = 15),
         GroupInfo(groupName = "2학년 5반", wakeUpTime = 920, peopleCount = 15)
-
     )
 
     val isTransparent = groupInfos.size >= 6
@@ -267,8 +266,6 @@ fun GroupPlus(modifier: Modifier = Modifier, isTransparent: Boolean, onClick: ()
         )
     }
 }
-
-
 
 
 //@RequiresApi(Build.VERSION_CODES.P)

@@ -5,68 +5,83 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.miracleplan.data.model.AccessTokenResponse
+import com.example.miracleplan.data.model.RefreshTokenRequest
+import com.example.miracleplan.data.model.TokenRequest
+import com.example.miracleplan.data.model.UserCreateRequest
 import com.example.miracleplan.data.model.UserResponse
 import com.example.miracleplan.data.network.ApiService
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 class UserViewModel(private val apiService: ApiService) : ViewModel() {
-    private val _userProfile = MutableLiveData<UserResponse>()
-    val userProfile: LiveData<UserResponse> get() = _userProfile
+
+    private val _loginResponse = MutableLiveData<AccessTokenResponse>()
+    val loginResponse: LiveData<AccessTokenResponse> get() = _loginResponse
+
+    private val _registerResponse = MutableLiveData<UserResponse>()
+    val registerResponse: LiveData<UserResponse> get() = _registerResponse
+
+    private val _refreshTokenResponse = MutableLiveData<AccessTokenResponse>()
+    val refreshTokenResponse: LiveData<AccessTokenResponse> get() = _refreshTokenResponse
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
-    fun getUserProfile(token: String) {
+
+    fun loginUser(username: String, password: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.getProfile("Bearer $token").execute()
+                val tokenRequest = TokenRequest(username, password)
+                val response = apiService.login(tokenRequest).execute()
                 if (response.isSuccessful) {
-                    _userProfile.value = response.body()
+                    _loginResponse.value = response.body()
                 } else {
                     val error = response.errorBody()?.string() ?: "Unknown error"
-                    _errorMessage.value = "Error fetching user profile: $error"
-                    Log.e("UserViewModel", "Error fetching user profile: $error")
+                    _errorMessage.value = "Error logging in: $error"
+                    Log.e("UserViewModel", "Error logging in: $error")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "An error occurred: ${e.message}"
-                Log.e("UserViewModel", "Exception fetching user profile", e)
+                Log.e("UserViewModel", "Exception logging in", e)
             }
         }
     }
 
-    fun updateProfile(token: String, file: MultipartBody.Part) {
+    fun registerUser(username: String, password: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.updateProfile("Bearer $token", file).execute()
+                val userCreateRequest = UserCreateRequest(username, password)
+                val response = apiService.register(userCreateRequest).execute()
                 if (response.isSuccessful) {
-                    Log.d("UserViewModel", "Success update profile")
+                    _registerResponse.value = response.body()
                 } else {
                     val error = response.errorBody()?.string() ?: "Unknown error"
-                    _errorMessage.value = "Error updating profile: $error"
-                    Log.e("UserViewModel", "Error updating profile: $error")
+                    _errorMessage.value = "Error registering user: $error"
+                    Log.e("UserViewModel", "Error registering user: $error")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "An error occurred: ${e.message}"
-                Log.e("UserViewModel", "Exception updating profile", e)
+                Log.e("UserViewModel", "Exception registering user", e)
             }
         }
     }
 
-    fun deleteProfile(token: String) {
+    fun refreshToken(refreshToken: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.deleteProfile("Bearer $token").execute()
+                val refreshTokenRequest = RefreshTokenRequest(refreshToken)
+                val response = apiService.refreshToken(refreshTokenRequest).execute()
                 if (response.isSuccessful) {
-                    _userProfile.value = null
+                    _refreshTokenResponse.value = response.body()
                 } else {
                     val error = response.errorBody()?.string() ?: "Unknown error"
-                    _errorMessage.value = "Error deleting profile: $error"
-                    Log.e("UserViewModel", "Error deleting profile: $error")
+                    _errorMessage.value = "Error refreshing token: $error"
+                    Log.e("UserViewModel", "Error refreshing token: $error")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "An error occurred: ${e.message}"
-                Log.e("UserViewModel", "Exception deleting profile", e)
+                Log.e("UserViewModel", "Exception refreshing token", e)
             }
         }
     }

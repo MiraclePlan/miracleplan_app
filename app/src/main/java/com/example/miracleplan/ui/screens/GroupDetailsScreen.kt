@@ -51,6 +51,7 @@ fun GroupDetailsPage(navController: NavHostController = rememberNavController())
             GroupRank(navController, showIcon = false)
             Spacer(modifier = Modifier.weight(1f))
             GroupParticipateButton(onClick = {navController.navigate("generatedGroup")})
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

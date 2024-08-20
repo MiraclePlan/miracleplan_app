@@ -18,13 +18,11 @@ data class RefreshTokenRequest(
 data class UserCreateRequest(
     val username: String,
     val password: String,
-    val profile: String?
 )
 
 data class UserResponse(
     val id: Int,
     val username: String,
-    val profile: String?
 )
 
 data class TodoCreateRequest(
@@ -60,14 +58,4 @@ data class GroupResponse(
 data class CalendarStatusResponse(
     val date: String,
     val status: String
-)
-
-data class ProfileUpdateResponse(
-    val filename: String,
-    val file_path: String
-)
-
-data class ProfileDeleteResponse(
-    val filename: String?,
-    val file_path: String?
 )

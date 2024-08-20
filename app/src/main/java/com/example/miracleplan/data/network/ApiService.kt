@@ -4,8 +4,6 @@ import com.example.miracleplan.data.model.AccessTokenResponse
 import com.example.miracleplan.data.model.CalendarStatusResponse
 import com.example.miracleplan.data.model.GroupCreateRequest
 import com.example.miracleplan.data.model.GroupResponse
-import com.example.miracleplan.data.model.ProfileDeleteResponse
-import com.example.miracleplan.data.model.ProfileUpdateResponse
 import com.example.miracleplan.data.model.RefreshTokenRequest
 import com.example.miracleplan.data.model.TodoCreateRequest
 import com.example.miracleplan.data.model.TodoResponse
@@ -13,31 +11,18 @@ import com.example.miracleplan.data.model.TodoUpdateRequest
 import com.example.miracleplan.data.model.TokenRequest
 import com.example.miracleplan.data.model.UserCreateRequest
 import com.example.miracleplan.data.model.UserResponse
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
     @POST("/token")
-    fun getAccessToken(@Body tokenRequest: TokenRequest): Call<AccessTokenResponse>
+    fun login(@Body tokenRequest: TokenRequest): Call<AccessTokenResponse>
 
     @POST("/token/refresh")
     fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Call<AccessTokenResponse>
 
     @POST("/user")
-    fun createUser(@Body userCreate: UserCreateRequest): Call<UserResponse>
-
-    @GET("/profile")
-    fun getProfile(@Header("Authorization") token: String): Call<UserResponse>
-
-    @PUT("/profile")
-    fun updateProfile(
-        @Header("Authorization") token: String,
-        @Part file: MultipartBody.Part
-    ): Call<ProfileUpdateResponse>
-
-    @DELETE("/profile")
-    fun deleteProfile(@Header("Authorization") token: String): Call<ProfileDeleteResponse>
+    fun register(@Body userCreate: UserCreateRequest): Call<UserResponse>
 
     @POST("/todo")
     fun createTodo(
